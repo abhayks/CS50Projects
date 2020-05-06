@@ -6,4 +6,12 @@ h1 {
 }
 p {
   color: rgb(247, 0, 255);
+  text-align: center;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 10px;  
+}
+th {
+    color: rgb(0, 0, 255);
 }
