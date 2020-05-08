@@ -1,0 +1,38 @@
+#ID-demo1, .highlight, #ID-demo2 {
+  font-size: 30px;
+  font-weight: normal;
+}
+
+#ID-demo2 {
+  background-color: yellow;
+}
+
+.highlight {
+  background-color: orange;
+  color: blue;
+  height: 100%;
+  position: relative;
+  width: 29%;
+}
+
+@media screen and (max-width: 800px) {
+  body {
+    background-color: olive;
+  }
+}
+p ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+p li {
+  display: inline-block;
+}
+p a {
+  display: block;
+  padding: 6px 12px;
+  color: red;
+  text-decoration: none;
+}
+
+/*# sourceMappingURL=styleSass.css.map */
