@@ -4,7 +4,7 @@ from flask import Flask, session, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, BookSearchForm
 from config import Config
 from flask import render_template, request, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -37,8 +37,29 @@ def index():
 		return redirect(url_for('login'))
 	else:
 		print ("Logged in")
-		return render_template('index.html', title='Glenwood Public Library' )
+		search = BookSearchForm(request.form)
+		if request.method == 'POST':
+			method = request.form['select']
+			keywords = request.form['search']
+			sql = f"Select * from books where {method} like '%{keywords}%'"
+			#print(f" SQL going ot be executed {sql} ")
+			books=db.execute(sql
+			).fetchall()
+			return render_template('books.html', title='Glenwood Public Library', books=books)
+		return render_template('index.html', title='Glenwood Public Library', form=search )
 
+@app.route("/books/<int:book_id>")
+def book(book_id):
+	return  redirect(url_for('login'))
+      # Make sure flight exists.
+      #flight = db.execute("SELECT * FROM flights WHERE id = :id", {"id": flight_id}).fetchone()
+      #if flight is None:
+      #    return render_template("error.html", message="No such flight.")
+
+      # Get all passengers.
+      #passengers = db.execute("SELECT name FROM passengers WHERE flight_id = :flight_id",
+      #                        {"flight_id": flight_id}).fetchall()
+      #return render_template("flight.html", flight=flight, passengers=passengers)
 
 @app.route("/logout")
 def logout():
@@ -105,3 +126,12 @@ def register():
 		return redirect(url_for('login'))
 	return render_template('register.html', title='Register', form=form)
 
+@app.route('/results')
+def search_results(search):
+	print(search)
+	results = []
+	search_string = search.data['search']
+	print (search_string)
+	return redirect(url_for('index'))
+
+	

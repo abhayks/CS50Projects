@@ -1,5 +1,16 @@
 {% extends "root.html" %}
 
 {% block content %}
-	<h1>Welcome for Glenwood Library </h1>
+    <h1>Welcome for Glenwood Library </h1>
+    {% from "formbase.html" import render_field %}
+    <form method="post">
+        <dl>
+            {{ render_field(form.select) }}
+            <p> {{ render_field(form.search) }}
+
+            </p>
+        </dl>
+        <p><input type="submit" value="Search">
+        </p>
+    </form>
 {% endblock %}
