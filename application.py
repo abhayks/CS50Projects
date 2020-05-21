@@ -30,30 +30,47 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
-	return "Project 1: TODO"
+	if not session.get('logged_in'):
+		print("Not logged in")
+		return redirect(url_for('login'))
+	else:
+		print ("Logged in")
+		return render_template('index.html', title='Glenwood Public Library' )
+
+
+@app.route("/logout")
+def logout():
+	session['logged_in'] = False
+	session.clear()  ### Added to clear session. 
+	return index()
 
 
 @app.route('/login' , methods=['GET', 'POST'])
 def login():
+	print("Entering Login Form")
 	form = LoginForm()
 	if form.validate_on_submit():
-		flash('Login requested for user {}, remember_me={}'.format(
-			form.username.data, form.remember_me.data))
+	#	flash('Login requested for user {}, remember_me={}'.format(
+	#		form.username.data, form.remember_me.data))
 		username = request.form['username']
 		password = request.form['password']
 		print(username)
 		print(password)
-		passwordhash = db.execute(
+		error = None
+		user = db.execute(
 			"SELECT passwordhash FROM users where username= :name", {"name": username}	).fetchone()
-		print(passwordhash)	
-		print (passwordhash.count("$"))
-		if  check_password_hash(passwordhash, password):
-			print ("Passwords match")
-		else:
-			print ("Passwords Do not match")
-		return redirect(url_for('index'))
+		if user is None:
+			error = 'Incorrect username.'
+			print(error)
+		elif not check_password_hash(user['passwordhash'], password):
+			error = 'Incorrect password.'
+			print(error)
+		if error is None:
+			session['logged_in'] = True
+			session['user']=username
+			return redirect(url_for('index'))
 	return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -63,17 +80,28 @@ def register():
 	if form.validate_on_submit():
 		username = request.form['username']
 		password = request.form['password']
-		session=Session()
-		if session.execute(
-			"SELECT user_id FROM user WHERE username = :name", {"name": username}	).fetchone() is not None:
-			error = f"User {username} is already registered."
+		first_name = request.form['first_name']
+		last_name = request.form['last_name']
+		email = request.form['email']	
+		print(username)
+		print(password)
+		print(first_name)
+		print(last_name)
+		print(email)	
+		if db.execute(
+			"SELECT user_id FROM users WHERE username = :name", {"name": username}	).fetchone() is not None:
+			print(f"User {username} is already registered.")
+			return render_template('register.html', title='Register', form=form)
 		else:
-			session.execute(
-				'INSERT INTO user (username, password) VALUES (?, ?)',
-				(username, generate_password_hash(password))
-			)
-			session.commit()
-		flash('Congratulations, you are now a registered user!')
+			#sql="Insert into users (username, passwordhash,first_name,last_name, email) "
+			#sql+=    "VALUES (%s, %s, %s, %s, %s)"
+			password_hash=generate_password_hash(password)
+			#recordToInsert=(username, password_hash, first_name,last_name,  email)
+			db.execute("Insert into users (username, passwordhash,first_name,last_name, email) VALUES (:username, :password_hash, :first_name,:last_name, :email)",
+				{"username": username, "password_hash": password_hash, "first_name": first_name, "last_name": last_name, "email": email})
+			#db.execute(sql, recordToInsert)
+			db.commit()
+	#	flash('Congratulations, you are now a registered user!')
 		return redirect(url_for('login'))
 	return render_template('register.html', title='Register', form=form)
 
