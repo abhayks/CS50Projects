@@ -24,5 +24,14 @@ class BookSearchForm(FlaskForm):
 		('year', 'Year'),
 		('author', 'Author')]
 	select = SelectField('Search books:', choices=choices)
-	print(select)
+	#print(select)
 	search = StringField( '')	
+	
+class BookReviewForm(FlaskForm):
+	choices = [('title', 'Title'),
+		('isbn', 'ISBN'),
+		('year', 'Year'),
+		('author', 'Author')]
+	select = SelectField('Search books:', choices=choices)
+	#print(select)
+	search = StringField( '')		
