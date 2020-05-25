@@ -23,6 +23,7 @@
     </table>
 
     <h1>Reviews </h1>
+    {% if goodreadsjson %}
     <h2> Goodreads review </h2>
 
     <table class="table table-bordered w-25 p-3"> 
@@ -37,6 +38,7 @@
         </tr>
           
     </table>
+    {% endif %}
     <h2> User reviews </h2>
     {% if reviews|length %}
     <table class="table table-bordered w-50 p-3"> 
