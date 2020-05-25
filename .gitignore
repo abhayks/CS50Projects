@@ -4,3 +4,4 @@ app/
 flask_session/
 library.py
 venv/
+SQLlearn
