@@ -9,7 +9,7 @@ if not os.getenv("DATABASE_URL"):
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))    
 
-for i in range (2,10):
+for i in range (1,20):
 	password=f"user{i}"
 	password_hash=generate_password_hash(password)
 	sql=f"insert into users (username, passwordhash, first_name, last_name, email) values ('user{i}', '{password_hash}', 'first_user{i}', 'user{i}_last', 'user{i}@mail.com')"

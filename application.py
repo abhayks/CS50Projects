@@ -8,6 +8,7 @@ from forms import LoginForm, RegistrationForm, BookSearchForm
 from config import Config
 from flask import render_template, request, redirect, url_for,  jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+import requests
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -72,7 +73,16 @@ def book(book_id):
 			if review['user_id'] == session['user_id']:
 				userreviewed=True
 				flash(u'You have already reviewed this book', 'error')
-		return render_template("bookDetails.html", book=book, reviews=reviews, userreviewed=userreviewed)
+		grrequest=requests.get("https://www.goodreads.com/book/review_counts.json", params={"key":"BDY66sPB8faTfagkwmzmQ", "isbns": book['isbn']})
+		if grrequest.status_code != 200:
+			flash(u'No result from Goodreads API for this book ', 'error')
+			return render_template("bookDetails.html", book=book, reviews=reviews, userreviewed=userreviewed)
+		else:
+			goodreadsjson = grrequest.json()
+			print(goodreadsjson)
+			average_rating=goodreadsjson["books"][0]["average_rating"]
+			print(average_rating)
+			return render_template("bookDetails.html", book=book, reviews=reviews, userreviewed=userreviewed, goodreadsjson=goodreadsjson)
 
 	#return  redirect(url_for('login'))
 

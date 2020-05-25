@@ -12,6 +12,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 filehandle=open("books.csv")
 reader = csv.reader(filehandle)
+header = next(reader)
 for isbn, title, author, year in reader: # loop gives each column a name
     db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:isbn, :title, :author, :year)",
         {"isbn": isbn, "title": title, "author": author, "year": year}) # substitute values from CSV line into SQL command, as per this dict
