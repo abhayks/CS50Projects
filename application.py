@@ -80,8 +80,6 @@ def book(book_id):
 		else:
 			goodreadsjson = grrequest.json()
 			print(goodreadsjson)
-			average_rating=goodreadsjson["books"][0]["average_rating"]
-			print(average_rating)
 			return render_template("bookDetails.html", book=book, reviews=reviews, userreviewed=userreviewed, goodreadsjson=goodreadsjson)
 
 	#return  redirect(url_for('login'))
