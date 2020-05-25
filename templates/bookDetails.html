@@ -1,0 +1,72 @@
+{% extends "root.html" %}
+
+{% block content %}
+    <h1>Book Details </h1>
+    <table class="table table-bordered w-25 p-3"> 
+        <tr> 
+            <td>"ISBN"</td>
+            <td>{{ book.isbn }} </td>
+        </tr>
+        <tr>
+            <td>"Title"</td>
+            <td>{{book.title}}</td>
+        </tr>
+        <tr>
+            <td>"Author"</td>
+            <td>{{book.author}} </td>
+        </tr>
+        <tr>
+            <td>"Year"</td>
+            <td>{{book.year}} </td>
+        </tr>
+
+    </table>
+
+    <h1>Reviews </h1>
+    {% if goodreadsjson %}
+    <h2> Goodreads review </h2>
+
+    <table class="table table-bordered w-25 p-3"> 
+          
+        <tr> 
+            <td>"Review Count"</td>
+            <td>{{ goodreadsjson["books"][0]["reviews_count"] }} </td>
+        </tr>
+        <tr> 
+            <td>Average Rating </td>
+            <td>{{ goodreadsjson["books"][0]["average_rating"] }} </td>
+        </tr>
+          
+    </table>
+    {% endif %}
+    <h2> User reviews </h2>
+    {% if reviews|length %}
+    <table class="table table-bordered w-50 p-3"> 
+        <thead class="thread-dark">
+            <tr>
+                <th scope="col">Rating</th>
+                <th scope="col">Text</th>
+                <th scope="col">Username</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+                <tr>
+                    <td> {{ review.rating }} </td>
+                    <td>{{review.text}} </td>
+                    <td>{{review.username}} </td>
+                </tr>
+                    
+            {% endfor %}
+        </tbody>
+    </table> 
+    {% else %}
+    No user reviews for this book. 
+    {% endif %}
+    
+    {% if userreviewed %}
+    {% else %}
+        <p><a href="{{ url_for('bookreview', book_id=book.book_id) }}">Click to Review this book!</a></p>
+    {% endif %}
+
+{% endblock %}
