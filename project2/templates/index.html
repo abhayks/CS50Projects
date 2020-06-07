@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block headblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}"> </script>
+{% endblock %}
+{% block bodyblock %}
+
+
+<div class="container">
+	<h1> Harvard Communicator</h1>
+	<h3> Welcome {{ username }} </h3>
+	<div class="row">
+
+		<!-- Feed table -->
+		<div class="container-feed col col-md-12 scrollit">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Messages</th>
+					</tr>
+				</thead>
+				<tbody id="messages">
+				
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div style="width: 50%;">
+		<!-- Channel creation form -->
+			
+				<form class="form-inline" id="create_channel_form">
+			<div class="form-group" style="width: 70%;">
+				<input type="text" autocomplete="off" name="textbox-channel" id="textbox-channel"
+					placeholder="Enter Channel name" class="form-control" style="width: 99.7%;" required autofocus>
+			</div>
+			<button type="submit" id="create-channel-button" class="btn btn-primary" style="width: 30%;">Create Channel</button>
+			<!-- Keep this button disabled by default -->
+		</form>
+	</div>
+
+
+	<!-- end create channel form -->
+
+	<div class="row">
+
+		<div class="container-fixed col col-md-4 scrollit">
+			<table class="table" , id="tab-rooms">
+				<thead>
+					<tr>
+						<th>Rooms</th>
+					</tr>
+				</thead>
+				<tbody id="rooms">
+				</tbody>
+			</table>
+		</div>
+		<!-- End Room list -->
+		<div class="container-fixed col col-md-8 scrollit">
+			<!-- Chat section -->
+
+			<div id="communicateBox" style="visibility: hidden;">
+
+				<!-- Channel Name on top -->
+				<div class="row justify-content-between">
+					<div class="col-md-auto">
+						<h2 id="channel_name"></h2>
+					  </div>
+					  <div class="col-md-auto">
+						<button type="submit" id="leaveChannelbutton" class="btn btn-primary" >Leave
+							Channel</button>
+					  </div>
+					
+				</div>
+
+				<!-- Message section -->
+				<div class="container-messages" id="messagebox" style="height:650px;" >
+					<!-- <div id="messages"></div> -->
+					
+				</div>
+
+				<!-- Form to send messages -->
+				<div >
+					<form class="form-inline" id="send_message_form">
+						<div class="form-group" style="width: 90%;">
+							<textarea type="text" id="message" class="form-control" autocomplete="off"
+								placeholder="Type a message..." style="width: 98.7%;" autofocus></textarea>
+						</div>
+						<button type="submit" id="sendMessagebutton" class="btn btn-primary"
+							style="width: 10%;">Send</button>
+						
+					</form>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<br />
+	<br />
+
+	<div id="chat">
+	</div>
+</div>
+
+<!-- Start Create Room Modal -->
+<div class="modal fade" id="RoomModal" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4>Create Room</h4>
+			</div>
+
+			<div class="modal-body">
+				<form id="room_create" class="form-inline" action="#">
+					<div class="form-group">
+						Room Name:
+						<input type="text" name="room_name" id="room_name" class="form-control" />
+						<input type="submit" value="Submit" class="form-control btn btn-default" />
+					</div>
+				</form>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+
+		</div>
+	</div>
+</div>
+<!-- End Create Room Modal -->
+
+<!-- html code done, now include the javascript files -->
+<script type="text/javascript" src="{{url_for('static', filename='js/jquery.3-1-1.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/socket.io.min.js')}}"></script>
+
+<script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.js')}}"></script>
+{% endblock %}
