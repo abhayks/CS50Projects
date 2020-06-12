@@ -87,5 +87,13 @@ def leave_channel(channel):
     print("Leave Channel Message string = " + msgstr)
     emit("broadcast-to-channels", msgstr, room=channel)    
 
+@socketio.on("send-message")
+def send_message(data):
+    mtime = time.ctime(time.time())
+    message = {"username": session.get('username'), "msg" : data["msg"], "mtime": mtime}
+    messages[data["channel"]].append(message)
+    print(data)
+    emit("receive-message", message, room=data["channel"]) 
+
 if __name__ == "__main__":
 	socketio.run(app, debug = True)

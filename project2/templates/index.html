@@ -63,8 +63,8 @@
 			<div id="communicateBox" style="visibility: hidden;">
 
 				<!-- Channel Name on top -->
-				<div class="row justify-content-between">
-					<div class="col-md-auto">
+				<div class="navbar navbar-fixed-top justify-content-between"  style="height:80px;">
+					<div class="col-md-auto bg-dark text-white text-capitalize"  id="channelname">
 						<h2 id="channel_name"></h2>
 					  </div>
 					  <div class="col-md-auto">
@@ -73,36 +73,44 @@
 					  </div>
 					
 				</div>
-
+				<!-- Channel name  section -->
+			<!-- 	<div class="p-3 mb-2 bg-dark text-white text-capitalize"  id="channelname" style="height:50px;"></div> -->
+					<!-- <div id="messages"></div> -->
 				<!-- Message section -->
 				<div class="container-messages" id="messagebox" style="height:650px;" >
 					<!-- <div id="messages"></div> -->
 					
 				</div>
 
-				<!-- Form to send messages -->
+				<!-- Form to send messages
 				<div >
 					<form class="form-inline" id="send_message_form">
 						<div class="form-group" style="width: 90%;">
-							<textarea type="text" id="message" class="form-control" autocomplete="off"
-								placeholder="Type a message..." style="width: 98.7%;" autofocus></textarea>
+							<textarea type="text" id="messagearea" class="form-control" autocomplete="off"
+								placeholder="Type a message..." style="width: 98.7%;" autofocus required></textarea>
 						</div>
 						<button type="submit" id="sendMessagebutton" class="btn btn-primary"
 							style="width: 10%;">Send</button>
 						
 					</form>
 				</div>
+				 -->
+				<div >
+					<form class="form-inline" id="send_message_form">
+						<div class="form-group" style="width: 80%;">
+							<input type="text" autocomplete="off" name="textbox-message" id="textbox-message"
+								placeholder="Enter message" class="form-control" style="width: 99.7%;" required autofocus>
+						</div>
+						<button type="submit" id="send-message-button" class="btn btn-primary" style="width: 15%;">Send</button>
+						<!-- Keep this button disabled by default -->
+					</form>
+				</div>
+
 
 			</div>
 
 		</div>
 
-	</div>
-
-	<br />
-	<br />
-
-	<div id="chat">
 	</div>
 </div>
 

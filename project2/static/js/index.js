@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('connect', () => {
         console.log("in Connect"); 
         socket.emit('request-all-rooms');
+        var channel = localStorage.channel;
+        if (channel ){
+            console.log ("Channel Exists, Joining " + channel);
+            socket.emit('join-channel', channel);
+        }
     });
     socket.on('show-all-rooms', data => {
         $('#rooms').empty();
@@ -22,14 +27,25 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('join-accepted', data => {
         localStorage.setItem("channel", data)
         document.querySelector('#communicateBox').style.visibility= "visible";
-        $('#messagebox').append('<tr> <td>'+data+ '</td> </tr>'); 
+        document.querySelector('#messagebox').innerHTML="";
+        document.querySelector('#channelname').innerHTML="";
+        $('#channelname').append('<tr> <td> <p class="text-center"><h2> <b> <i> '+data+ ' </i></b> </h2></p></td> </tr>'); 
+        // TODO :: Diable all other JOIN buttons
+        document.querySelectorAll('#btn-join-channel').forEach(button => {
+            button.disabled = true;
+        });
     });
     socket.on('broadcast-to-channels', data => {
-        console.log(data)
-        console.log("Message ")
-        console.log(data)
         $('#messagebox').append('<tr> <td>'+data+ '</td> </tr>'); 
     });
+    socket.on('receive-message', message => {
+        console.log(message);
+        toappend=' <div class="border border-primary">';
+        toappend=toappend+ ' <div class="row justify-content-between"  style="font-family: sans-serif;"><div class="col-md-auto bg-dark text-white text-capitalize"> '+ message.username+ ' </div> <div class="col-md-auto"> <small> '+message.mtime+' </small> </div>  </div> ';
+        toappend=toappend+ ' <div class="row"> '+message.msg+ '</div>  </div>';
+        $('#messagebox').append(toappend);
+    });
+
     // Non Socket code
     document.querySelector('#create-channel-button').disabled = true;
     document.querySelector('#textbox-channel').onkeyup = () => {
@@ -48,13 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     };
     
-    document.querySelector('#leaveChannelbutton').onsubmit = () => {
+    document.querySelector('#leaveChannelbutton').onclick = () => {
         console.log("Leaving channel")
-        let textboxChannel= localStorage.gettItem("channel");
+        let textboxChannel= localStorage.getItem("channel");
         socket.emit('leave-channel', textboxChannel);
-        localStorage.setItem("channel", "");
+        localStorage.removeItem("channel");
+        // Leaving a channel, so enable all others to be joined
+        document.querySelectorAll('#btn-join-channel').forEach(button => {
+            button.disabled = false;
+        });
         document.querySelector('#communicateBox').style.visibility= "hidden";
-        $('#messagebox').clear();
         return false;
     };
 
@@ -63,9 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
        document.querySelectorAll('#btn-join-channel').forEach(button => {
             button.onclick = () => {
                 var channel = button.dataset.channel;
-                socket.emit('join-channel', channel)
+                socket.emit('join-channel', channel);
             };
         });
 
     }
+
+    document.querySelector('#send-message-button').onclick = () => {
+        console.log("In Send message"); 
+        let messagetext= document.querySelector('#textbox-message');
+        let channel= localStorage.getItem("channel");
+        data = {'msg': messagetext.value,'channel': channel};
+        console.log(data);
+        socket.emit('send-message', data);
+        messagetext.value="";
+        return false;
+    };
+    
 });
