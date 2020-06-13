@@ -57,6 +57,7 @@ def index():
 def showrooms():
     print('In request, sending channels back')
     print(channels)
+    emit("connected", session['username'])
     emit("show-all-rooms", channels)
 
 @socketio.on("create-channel")
@@ -74,11 +75,13 @@ def createChannel(channel):
 def join_channel(channel):
     t = time.localtime()
     current_time = time.strftime("%H:%M:%S", t)
-    join_room(channel)
-    emit('join-accepted', channel)
-    msgstr=session.get('username') + " has joined room"
-    print("Message string = " + msgstr)
-    emit("broadcast-to-channels", msgstr, room=channel)
+    # TODO :: Only join if the channel existys in channels
+    if channel in channels:
+        join_room(channel)
+        emit('join-accepted', channel)
+        msgstr=session.get('username') + " has joined room"
+        print("Message string = " + msgstr)
+        emit("broadcast-to-channels", msgstr, room=channel)
 
 @socketio.on("leave-channel")
 def leave_channel(channel):

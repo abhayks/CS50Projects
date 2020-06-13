@@ -4,13 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //once connected perform these
     socket.on('connect', () => {
-        console.log("in Connect"); 
         socket.emit('request-all-rooms');
         var channel = localStorage.channel;
         if (channel ){
             console.log ("Channel Exists, Joining " + channel);
             socket.emit('join-channel', channel);
         }
+    });
+    socket.on('connected', username => {
+        localStorage.setItem("user", username);
     });
     socket.on('show-all-rooms', data => {
         $('#rooms').empty();
@@ -24,12 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('message', data => {
         $('#messages').append('<tr> <td>'+data+ '</td> </tr>'); 
     });
-    socket.on('join-accepted', data => {
-        localStorage.setItem("channel", data)
+    socket.on('join-accepted', channel => {
+        localStorage.setItem("channel", channel);
         document.querySelector('#communicateBox').style.visibility= "visible";
         document.querySelector('#messagebox').innerHTML="";
         document.querySelector('#channelname').innerHTML="";
-        $('#channelname').append('<tr> <td> <p class="text-center"><h2> <b> <i> '+data+ ' </i></b> </h2></p></td> </tr>'); 
+        $('#channelname').append('<tr> <td> <p class="text-center"><h2> <b> <i> '+channel+ ' </i></b> </h2></p></td> </tr>'); 
         // TODO :: Diable all other JOIN buttons
         document.querySelectorAll('#btn-join-channel').forEach(button => {
             button.disabled = true;
@@ -39,10 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#messagebox').append('<tr> <td>'+data+ '</td> </tr>'); 
     });
     socket.on('receive-message', message => {
-        console.log(message);
-        toappend=' <div class="border border-primary">';
-        toappend=toappend+ ' <div class="row justify-content-between"  style="font-family: sans-serif;"><div class="col-md-auto bg-dark text-white text-capitalize"> '+ message.username+ ' </div> <div class="col-md-auto"> <small> '+message.mtime+' </small> </div>  </div> ';
-        toappend=toappend+ ' <div class="row"> '+message.msg+ '</div>  </div>';
+       user=message.username;
+       if (user===localStorage.user) {
+            toappend=' <div class="card text-white bg-success ">';
+       }else{
+           toappend=' <div class="card text-white bg-primary ">';
+       }
+        //toappend=toappend+ ' <div class="card-body text-capitalize">  <h5 class="card-title text-dark ">'+ message.username+  ' </h5> <h10 class="card-subtitle"> '+message.mtime+' </h10> ';
+        toappend=toappend+ ' <div class="card-header">  <ul class="nav nav-pills card-header-pills"> <div class="card-header"> <li class="nav-item text-dark text-capitalize"> '+ message.username+  ' </li> <li class="nav-item"> <small> '+message.mtime+' </small> </li> </ul>  </div>';
+        toappend=toappend+ ' <div class="card-body"> <p class="card-text">'+message.msg+ '</p> </div>  </div>';
         $('#messagebox').append(toappend);
     });
 
